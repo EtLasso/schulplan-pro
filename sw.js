@@ -1,4 +1,4 @@
-const CACHE='sp-v12';
+const CACHE='sp-v16';
 self.addEventListener('install', e=>{
 e.waitUntil(caches.open(CACHE).then(c=>c.addAll([
 './', './index.html','./css/styles.css','./js/app.js','./js/components/router.js','./js/components/ui.js',
