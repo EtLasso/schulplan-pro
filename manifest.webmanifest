@@ -2,7 +2,7 @@
 "name": "SchulPlan Pro",
 "short_name": "SchulPlan",
 "display": "standalone",
-"start_url": "/",
+"start_url": "./",
 "background_color": "#0b0f17",
 "theme_color": "#0b0f17",
 "icons": [
