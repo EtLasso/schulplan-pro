@@ -1,432 +1,212 @@
-# SchulPlan Pro – Anforderungsdokumentation
-
-**Version:** 1.0
-**Datum:** 02.10.2025
-**Autor:** Projektteam SchulPlan Pro
-**Reviewer:** (frei)
-
----
-
-## Änderungshistorie
-
-| Version | Datum      | Änderungen                                           | Autor | Reviewer |
-| ------- | ---------- | ---------------------------------------------------- | ----- | -------- |
-| 0.1     | 25.09.2025 | Erste Struktur & Scope                               | Team  | –        |
-| 0.9     | 30.09.2025 | Vollständige Anforderungen, Traceability, Tests      | Team  | –        |
-| 1.0     | 02.10.2025 | Review-Kommentare eingearbeitet, Freigabe zur Abgabe | Team  | –        |
-
----
-
-## 1. Einleitung
-
-### 1.1 Zweck & Business Value
-
-SchulPlan Pro ist eine Web- und Mobile-Plattform für weiterführende Schulen. Ziel ist es, Stundenpläne, Hausaufgaben, Abwesenheitsmeldungen, Kommunikation und Ressourcenplanung zu bündeln. **Business Value:** Reduktion administrativer Aufwände (>30 %), verbesserte Unterrichtsvorbereitung, transparente Kommunikation zwischen Lehrkräften, Lernenden und Erziehungsberechtigten.
-
-### 1.2 Geltungsbereich (Scope)
-
-**Im Scope:**
-
-* Stundenplan- und Vertretungsanzeige
-* Hausaufgaben- & Abgabe-Management
-* Abwesenheitsmeldung mit Genehmigungsworkflow
-* Nachrichten/Ankündigungen (kein freier Chat)
-* Ressourcenbuchung (z. B. Räume, Geräte)
-* Rollen- & Rechtemodell, OIDC-Login
-* Benachrichtigungen (Push, E-Mail)
-
-**Außerhalb des Scopes (Nicht-Ziele):**
-
-* Vollwertiges LMS (Kursmaterial-Verteilung nur rudimentär)
-* Notenverwaltung/Zeugnisse (Schnittstelle vorgesehen, aber keine Eingabe)
-* Zahlungsabwicklung
-
-### 1.3 Stakeholder & Nutzergruppen
-
-| Rolle                    | Beschreibung               | Hauptziele                                        |
-| ------------------------ | -------------------------- | ------------------------------------------------- |
-| Lernende                 | Schüler:innen der Sek I/II | Aufgaben im Blick, Termine, Benachrichtigungen    |
-| Lehrkräfte               | Unterrichtende             | Aufgaben erstellen, Abgaben sichten, Vertretungen |
-| Schulleitung             | Leitung/Verwaltung         | Transparenz, Auslastungen, Compliance             |
-| Verwaltung               | Schulsekretariat           | Abwesenheitsworkflow, Kommunikation               |
-| Erziehungsberechtigte    | Eltern/Guardians           | Sicht auf Aufgaben/Abwesenheiten                  |
-| IT-Admin                 | Schulträger/IT             | Betrieb, Sicherheit, Integrationen                |
-| Datenschutzbeauftragte:r | DSB                        | DSGVO-Konformität                                 |
-
-### 1.4 Systemkontext & Schnittstellen
-
-**Systemgrenze:** SchulPlan Pro (Web-Frontend, Mobile-App, Backend-Services).
-**Externe Systeme/Schnittstellen:**
-
-* **SIS/Schuldaten**: Import von Klassen/Personen (REST/CSV, täglich)
-* **Identität (OIDC/SAML)**: SSO via Landes- oder Träger-IdP
-* **Kalender (ICS)**: Export von Terminen/Hausaufgaben
-* **E-Mail/Push**: SMTP & FCM/APNS
-* **Dateispeicher**: S3-kompatibel in EU-Region
-
-### 1.5 Begriffe & Abkürzungen (Glossar – Auszug)
-
-* **SIS**: Student Information System (Schulverwaltung)
-* **OIDC**: OpenID Connect (Anmeldung)
-* **DSGVO**: Datenschutz-Grundverordnung
-* **UC**: Use Case
-* **FR/NFR/CON**: Funktionale/Qualitäts-/Randbedingung
-
----
-
-## 2. Use Cases (Kurzbeschreibungen)
-
-* **UC-01**: Lernende sehen ihren tagesaktuellen Stundenplan inkl. Vertretungen.
-* **UC-02**: Lehrkraft erstellt Hausaufgabe mit Abgabedatum und Rubrik.
-* **UC-03**: Lernende reichen Abgabe (Datei/Text) ein und sehen Feedback.
-* **UC-04**: Erziehungsberechtigte melden Abwesenheit; Verwaltung genehmigt.
-* **UC-05**: Schulleitung sendet Ankündigung an definierte Zielgruppen.
-* **UC-06**: Raum-/Gerätebuchung durch Lehrkräfte.
-* **UC-07**: IT-Admin verwaltet Rollen, Mandanten und Integrationen.
-
----
-
-## 3. Funktionale Anforderungen (FR)
-
-**Hinweis:** Pro Eintrag: *ID, Titel, Beschreibung (muss), Quelle, Priorität, Akzeptanzkriterien, Status, Version, Verantwortlich.*
-
-### FR-001 – Login via OIDC
-
-* **Beschreibung:** Das System muss Nutzer:innen die Anmeldung via OIDC mit dem Schul-IdP ermöglichen.
-* **Quelle:** IT-Admin, DSB
-* **Priorität:** MUSS
-* **Akzeptanzkriterien (Beispiele):**
-
-  * **Gegeben** eine aktive IdP-Konfiguration, **wenn** eine/ ein Nutzer:in sich mit gültigen Schul-Credentials anmeldet, **dann** erhält die Person Zugriff entsprechend ihrer Rolle innerhalb von ≤ 2 s.
-  * **Gegeben** ein abgelaufenes Token, **wenn** die Session validiert wird, **dann** erfolgt eine stille Token-Erneuerung oder ein Logout mit Hinweis.
-* **Status:** Genehmigt
-* **Version:** 1.0
-* **Verantwortlich:** IT-Lead
-
-### FR-002 – Rollen & Rechte
-
-* **Beschreibung:** Das System muss Rollen (Lernende, Lehrkraft, Verwaltung, Leitung, DSB, IT-Admin) mit granularen Berechtigungen abbilden.
-* **Quelle:** Schulleitung, IT-Admin
-* **Priorität:** MUSS
-* **Akzeptanzkriterien:**
-
-  * Rechte-Matrix ist konfigurierbar; unautorisierte Aktionen werden mit 403 abgewiesen und geloggt.
-* **Status:** Genehmigt
-* **Version:** 1.0
-* **Verantwortlich:** Produkt
-
-### FR-003 – Stundenplananzeige
-
-* **Beschreibung:** Das System muss den individuellen Stundenplan inkl. Vertretungen und Raumänderungen tagesaktuell anzeigen.
-* **Quelle:** Lernende, Lehrkräfte
-* **Priorität:** MUSS
-* **Akzeptanzkriterien:**
-
-  * Änderungen aus SIS-Import erscheinen ≤ 15 min nach Import.
-  * Offline-Ansicht zeigt den zuletzt synchronisierten Tag.
-* **Status:** Entwurf
-* **Version:** 1.0
-* **Verantwortlich:** Frontend
-
-### FR-004 – Hausaufgaben erstellen
-
-* **Beschreibung:** Lehrkräfte müssen Hausaufgaben mit Titel, Beschreibung, Abgabedatum, Kurs, Anhängen und Bewertungsrubrik erstellen können.
-* **Quelle:** Lehrkräfte
-* **Priorität:** MUSS
-* **Akzeptanzkriterien:**
-
-  * Pflichtfelder validiert; Erstellung ≤ 3 s; Benachrichtigung an betroffene Lernende wird ausgelöst.
-* **Status:** Genehmigt
-* **Version:** 1.0
-* **Verantwortlich:** Produkt
-
-### FR-005 – Abgabe einreichen
-
-* **Beschreibung:** Lernende müssen Dateiupload (≤ 50 MB) oder Textabgabe pro Hausaufgabe einreichen können.
-* **Quelle:** Lernende
-* **Priorität:** MUSS
-* **Akzeptanzkriterien:**
-
-  * Upload-Progress sichtbar; bei Verbindungsabbruch Wiederaufnahme; eindeutige Zeitstempel.
-* **Status:** Entwurf
-* **Version:** 1.0
-* **Verantwortlich:** Backend
-
-### FR-006 – Feedback & Bewertung
-
-* **Beschreibung:** Lehrkräfte müssen Feedback geben und optional Punkte/Noten nach Rubrik vergeben können.
-* **Quelle:** Lehrkräfte
-* **Priorität:** SOLL
-* **Akzeptanzkriterien:**
-
-  * Lernende sehen Feedback innerhalb ≤ 1 s nach Speichern (optimistische UI erlaubt).
-* **Status:** Entwurf
-* **Version:** 1.0
-* **Verantwortlich:** Frontend
-
-### FR-007 – Abwesenheitsmeldung
-
-* **Beschreibung:** Erziehungsberechtigte müssen Abwesenheiten (Datum/Grund/Attest) melden können; Verwaltung genehmigt/ablehnt.
-* **Quelle:** Eltern, Verwaltung
-* **Priorität:** MUSS
-* **Akzeptanzkriterien:**
-
-  * Workflowstatus (eingereicht/genehmigt/abgelehnt) mit Audit-Log; Benachrichtigung an Lehrkräfte der betroffenen Stunden.
-* **Status:** Genehmigt
-* **Version:** 1.0
-* **Verantwortlich:** Produkt
-
-### FR-008 – Ankündigungen
-
-* **Beschreibung:** Schulleitung muss zielgruppenspezifische Ankündigungen (Jahrgang, Klasse, Rolle) versenden können.
-* **Quelle:** Schulleitung
-* **Priorität:** MUSS
-* **Akzeptanzkriterien:**
-
-  * Zustellquote ≥ 98 % (E-Mail/Push kombiniert); Lesebestätigungen aggregiert.
-* **Status:** Entwurf
-* **Version:** 1.0
-* **Verantwortlich:** Backend
-
-### FR-009 – Ressourcenbuchung
-
-* **Beschreibung:** Lehrkräfte müssen Räume/Geräte mit Konfliktprüfung buchen können.
-* **Quelle:** Lehrkräfte
-* **Priorität:** SOLL
-* **Akzeptanzkriterien:**
-
-  * Doppelbuchungen werden verhindert; Kalenderexport (ICS) für bestätigte Buchungen.
-* **Status:** Entwurf
-* **Version:** 1.0
-* **Verantwortlich:** Produkt
-
-### FR-010 – Benachrichtigungen
-
-* **Beschreibung:** Das System muss Ereignis-basierte Push/E-Mail-Benachrichtigungen verschicken (z. B. neue Aufgabe, Feedback, Vertretung).
-* **Quelle:** Lernende, Lehrkräfte
-* **Priorität:** MUSS
-* **Akzeptanzkriterien:**
-
-  * Latenz ≤ 60 s nach Ereignis; Opt-in/Opt-out pro Kanal; Ruhezeiten konfigurierbar.
-* **Status:** Genehmigt
-* **Version:** 1.0
-* **Verantwortlich:** Backend
-
-### FR-011 – Audit-Log
-
-* **Beschreibung:** Das System muss sicherheitsrelevante Aktionen revisionssicher protokollieren (Login, Rollenänderungen, Datenzugriffe).
-* **Quelle:** IT-Admin, DSB
-* **Priorität:** MUSS
-* **Akzeptanzkriterien:**
-
-  * Unveränderliches Log (WORM-Speicher), Aufbewahrung ≥ 12 Monate.
-* **Status:** Entwurf
-* **Version:** 1.0
-* **Verantwortlich:** Security
-
-### FR-012 – Mandantenfähigkeit
-
-* **Beschreibung:** Das System muss mehrere Schulen (Mandanten) mit isolierten Datenräumen unterstützen.
-* **Quelle:** Schulträger
-* **Priorität:** MUSS
-* **Akzeptanzkriterien:**
-
-  * Kein Dateneinblick zwischen Mandanten; separate Admin-Rollen pro Mandant.
-* **Status:** Genehmigt
-* **Version:** 1.0
-* **Verantwortlich:** Architektur
-
-### FR-013 – Datenexport
-
-* **Beschreibung:** Nutzer:innen müssen personenbezogene Daten exportieren können (Selbstauskunft nach DSGVO Art. 15).
-* **Quelle:** DSB
-* **Priorität:** MUSS
-* **Akzeptanzkriterien:**
-
-  * Export bereit ≤ 7 Tage; maschinenlesbares Format (JSON/CSV); Protokollierung.
-* **Status:** Entwurf
-* **Version:** 1.0
-* **Verantwortlich:** Security
-
-### FR-014 – Barrierefreie Navigation
-
-* **Beschreibung:** Das System muss Tastaturbedienung und Screenreader-Texte für alle Navigationselemente bereitstellen.
-* **Quelle:** DSB, Lernende
-* **Priorität:** MUSS
-* **Akzeptanzkriterien:**
-
-  * WCAG 2.2 AA-relevante ARIA-Rollen vorhanden; Focus-Order logisch; Tested mit NVDA/VoiceOver.
-* **Status:** Entwurf
-* **Version:** 1.0
-* **Verantwortlich:** Frontend
-
-### FR-015 – Offline-Modus (Basis)
-
-* **Beschreibung:** Die App muss Kernfunktionen (Planansicht, Aufgabenliste) offline lesbar machen; Änderungen werden bei Reconnect synchronisiert.
-* **Quelle:** Lernende
-* **Priorität:** KANN
-* **Akzeptanzkriterien:**
-
-  * Hintergrundsync ≤ 30 s nach Reconnect; Konfliktlösung nach „Last-Writer-Wins“ + Hinweis.
-* **Status:** Entwurf
-* **Version:** 1.0
-* **Verantwortlich:** Mobile
-
-*(Weitere FRs können bei Bedarf ergänzt werden; keine Inhalte überschneiden sich, keine Widersprüche identifiziert.)*
-
----
-
-## 4. Qualitätsanforderungen (NFR)
-
-### NFR-001 – Performance
-
-* **Muss:** 95. Perzentil Server-Antwortzeit < 800 ms; Startzeit Mobile-App kalt < 3 s, warm < 1 s.
-* **Nachweis:** Lasttest (5k gleichzeitige Nutzer:innen), Monitoring-Dashboards.
-
-### NFR-002 – Verfügbarkeit
-
-* **Muss:** 99,5 % Monatsverfügbarkeit (exkl. angekündigte Wartung ≤ 2 h/Monat).
-* **Nachweis:** Uptime-Monitoring, SLA-Berichte.
-
-### NFR-003 – Sicherheit
-
-* **Muss:** TLS 1.2+ überall; OWASP Top 10 mitigiert; 2FA für Admin-Rollen.
-* **Nachweis:** Penetrationstest halbjährlich, Security-Scan im CI.
-
-### NFR-004 – Datenschutz
-
-* **Muss:** Datenverarbeitung in EU-Region; Privacy-by-Default; Datenminimierung; Aufbewahrungsfristen konfigurierbar.
-* **Nachweis:** TOMs-Dokumentation, AVV, DPIA abgeschlossen.
-
-### NFR-005 – Usability
-
-* **Muss:** SUS ≥ 80 in Pilotgruppe (n≥30); Onboarding < 5 Min.
-* **Nachweis:** Nutzertests, SUS-Auswertung.
-
-### NFR-006 – Barrierefreiheit
-
-* **Muss:** WCAG 2.2 AA-Konformität.
-* **Nachweis:** Audit-Report, automatisierte Checks (axe) + manuelle Tests.
-
-### NFR-007 – Wartbarkeit
-
-* **Muss:** Modulgrenzen dokumentiert; Code-Coverage Backend ≥ 70 %.
-* **Nachweis:** Architektur-Readme, CI-Berichte.
-
-### NFR-008 – Internationalisierung
-
-* **Muss:** DE/EN; alle Texte externalisiert; Datums-/Zahlformate lokalisiert.
-* **Nachweis:** i18n-Tests, Snapshot-Tests.
-
----
-
-## 5. Randbedingungen (CON)
-
-### CON-001 – Technologie
-
-* React/TypeScript (Web), Kotlin Multiplatform/Swift (Mobile), Node.js/Express (API), Postgres; Infrastruktur: Kubernetes (EU-Region), Objektstorage S3-kompatibel.
-
-### CON-002 – Compliance
-
-* DSGVO/BDSG-konform; Auftragsverarbeitung mit Hosting-Provider; Log-Aufbewahrung 12–24 Monate.
-
-### CON-003 – Integration
-
-* OIDC/SAML IdP des Trägers; SIS-Import täglich 02:00 Uhr; ICS-Export lesend.
-
-### CON-004 – Budget/Termine
-
-* MVP in 6 Monaten; Pilot an 2 Schulen (je 800 Nutzer:innen).
-
----
-
-## 6. Datenmodell (High-Level, textuell)
-
-**Entitäten:** Nutzer(in), Rolle, Klasse, Kurs, Stunde, Vertretung, Aufgabe, Abgabe, Feedback, Ankündigung, Abwesenheit, Ressource, Buchung.
-**Beziehungen:**
-
-* Klasse 1..* — *..* Nutzer(in) (über Kurs-Zuordnung)
-* Kurs 1..* — 1..* Aufgabe; Aufgabe 1..* — 0..* Abgabe; Abgabe 0..1 — 1 Feedback
-* Ressource 1..* — 0..* Buchung (zeitliche Slots)
-
----
-
-## 7. UI-/Prototyp-Skizzen (textuell)
-
-```
-[Home]
- ├─ Heute: 08:00 Mathe (Raum 203) | 09:00 Deutsch (Raum 115)
- ├─ Aufgaben (2): „Aufsatz“, „Arbeitsblatt 3“ (Fällig heute 23:59)
- └─ Hinweise: 1 neue Ankündigung
-
-[Aufgabe Detail]
- Titel | Kurs | Fällig am | Beschreibung | Anhänge | Abgeben [Button]
-```
-
----
-
-## 8. Traceability (Auszug)
-
-| Ziel                            | FR/NFR                           | Use Case     | Test-ID     |
-| ------------------------------- | -------------------------------- | ------------ | ----------- |
-| Transparente Aufgabenverwaltung | FR-004, FR-005, FR-006           | UC-02, UC-03 | T-001–T-006 |
-| Aktuelle Stundenpläne           | FR-003, FR-010                   | UC-01        | T-020–T-024 |
-| DSGVO-Konformität               | FR-011, FR-013, NFR-003, NFR-004 | UC-07        | T-050–T-060 |
-
----
-
-## 9. Abnahmekriterien & Testfälle (Beispiele)
-
-**T-001 (FR-004):** Erstellung Hausaufgabe – Pflichtfelder validiert; Benachrichtigung versendet; Dauer ≤ 3 s.
-**T-005 (FR-005):** Upload 50 MB wird in < 60 s abgeschlossen (WLAN 50 Mbit/s); Resume nach Trennung.
-**T-021 (FR-003):** Vertretungsänderung erscheint ≤ 15 min nach Import.
-**T-052 (NFR-004):** Export personenbezogener Daten enthält vollständige Datensätze der/ des Nutzers:in (Selbstauskunft).
-**T-070 (NFR-006/FR-014):** Tastaturbedienung ohne Maus für Hauptnavigation möglich; Screenreader liest Labels korrekt vor.
-
----
-
-## 10. Priorisierung
-
-* **MUSS:** FR-001, FR-002, FR-003, FR-004, FR-005, FR-007, FR-008, FR-010, FR-011, FR-012, FR-013, FR-014; NFR-001–006
-* **SOLL:** FR-006, FR-009; NFR-007–008
-* **KANN:** FR-015
-
----
-
-## 11. Risiken & Annahmen
-
-**Risiken:** IdP-Integration variiert je Träger; Datenqualität SIS; Geräteheterogenität.
-**Annahmen:** Verfügbarkeit IdP ≥ 99 %; Schulen liefern SIS-CSV täglich; Pilot-Schulen stellen Testdaten.
-
----
-
-## 12. Offene Punkte
-
-* Bewertungsrubriken: vordefiniert vs. frei?
-* Max. Aufbewahrungsfrist für Abgaben?
-* ICS-Export: privat/öffentlich je Nutzer:in?
-
----
-
-## 13. Qualitäts- & Vollständigkeitscheck
-
-* Peer-Review durchgeführt (Autor ≠ Reviewer).
-* Eindeutigkeit/Prüfbarkeit/Konsistenz geprüft; keine Widersprüche/Redundanzen festgestellt.
-* Rückverfolgbarkeit: IDs, Quellen, Test-Verweise vorhanden.
-
----
-
-## 14. Anhang
-
-### 14.1 Vollständiges Glossar
-
-(Erweitern nach Bedarf; Begriffe im Text konsistent verwendet.)
-
-### 14.2 Referenzen
-
-* Interne Schul-IT-Richtlinien, IdP-Dokumentation
-* WCAG 2.2, ISO/IEC 25010 (Product Quality)
-
----
-
-*Ende der Anforderungsdokumentation. Dieses Dokument ist strukturiert, messbar, prüfbar und rückverfolgbar; alle Muss-Elemente sind erfüllt. Bonus-Elemente (Priorisierung, Testfälle, Prototyp-Skizzen, Attributierung) sind enthalten.*
+%PDF-1.4
+%����
+1 0 obj
+<< /Type /Font /Subtype /Type1 /Name /F1 /BaseFont /Helvetica >>
+endobj
+2 0 obj
+<< /Length 3196 >>
+stream
+BT
+/F1 10 Tf
+14 TL
+1 0 0 1 50 792 Tm
+ET
+BT
+/F1 16 Tf
+(SchulPlan Pro – Dokumentation) Tj
+T*
+ET
+BT
+/F1 10 Tf
+14 TL
+(Version 1.0  •  Stand: 02.10.2025) Tj
+T*
+T*
+ET
+BT
+/F1 13 Tf
+(Überblick) Tj
+T*
+ET
+BT
+/F1 10 Tf
+14 TL
+(SchulPlan Pro ist eine moderne Web-App \(PWA\) für Schulen, die Stundenpläne, Aufgaben,) Tj
+T*
+(Abwesenheiten und Ressourcenbuchungen bündelt. Dieses Dokument beschreibt Ziel,) Tj
+T*
+(Funktionsumfang, Qualitätseigenschaften sowie Aufbau der bereitgestellten Demo \(GitHub Pages\).) Tj
+T*
+T*
+ET
+BT
+/F1 13 Tf
+(Ziele & Nutzen) Tj
+T*
+ET
+BT
+/F1 10 Tf
+14 TL
+(• Reduktion administrativer Aufwände, klare Kommunikation zwischen Lehrkräften, Lernenden und) Tj
+T*
+(Erziehungsberechtigten.) Tj
+T*
+(• Übersichtlich: Dashboard, tagesaktueller Stundenplan, Aufgabenverwaltung,) Tj
+T*
+(Abwesenheitsworkflow, Ressourcenbuchung.) Tj
+T*
+T*
+ET
+BT
+/F1 13 Tf
+(Funktionsumfang \(Demo\)) Tj
+T*
+ET
+BT
+/F1 10 Tf
+14 TL
+(• Dashboard: Tagesüberblick über Stundenplan, Aufgaben, Abwesenheiten und Ressourcen.) Tj
+T*
+(• Stundenplan: Anzeige nach Wochentagen \(Mock-Daten\).) Tj
+T*
+(• Aufgaben: Anlegen neuer Aufgaben \(Kurs, Titel, Fälligkeitsdatum\).) Tj
+T*
+(• Abwesenheiten: Einreichen mit Name, Datum, Grund, Status-Übersicht.) Tj
+T*
+(• Ressourcen: Auswahl von Raum/Gerät und Buchen eines Slots.) Tj
+T*
+(• Admin: Platzhalter für Rollen, DSGVO-Export und Audit-Logs.) Tj
+T*
+T*
+ET
+BT
+/F1 13 Tf
+(Architektur \(Front-End Demo\)) Tj
+T*
+ET
+BT
+/F1 10 Tf
+14 TL
+(• Statisches Hosting \(GitHub Pages\), Vanilla JS \(ES-Module\), minimaler Router, Komponenten-) Tj
+T*
+(Helfer.) Tj
+T*
+(• PWA-Basis mit Service Worker \(Offline-Caching\) und Manifest.) Tj
+T*
+(• Mock-API \(localStorage\) anstelle eines echten Backends.) Tj
+T*
+(• Ordnerstruktur:) Tj
+T*
+(  - css/: globales Design \(Dark/Neon\)) Tj
+T*
+(  - js/: app.js \(Shell\), components/ \(router, ui\), pages/ \(Feature-Seiten\), api/mock.js) Tj
+T*
+(  - assets/: Icons, Dokumente) Tj
+T*
+(  - sw.js, manifest.webmanifest, index.html) Tj
+T*
+T*
+ET
+BT
+/F1 13 Tf
+(Barrierefreiheit & UX) Tj
+T*
+ET
+BT
+/F1 10 Tf
+14 TL
+(• Tastaturbedienung, sichtbare Fokuszustände, `skip`-Link, klare Kontraste.) Tj
+T*
+(• Responsive Karten-Layouts, Glassmorphism/Neon-Details, Light/Dark-Mode.) Tj
+T*
+T*
+ET
+BT
+/F1 13 Tf
+(Qualität \(Auszug\)) Tj
+T*
+ET
+BT
+/F1 10 Tf
+14 TL
+(• Performance: statische Auslieferung, Caching über SW; geringe JS-Größe.) Tj
+T*
+(• Datenschutz: keine echten Personendaten in der Demo; Daten verbleiben im Browser) Tj
+T*
+(\(localStorage\).) Tj
+T*
+(• Wartbarkeit: modulare Dateien, klare Seiten-Trennung, einfache Erweiterbarkeit.) Tj
+T*
+T*
+ET
+BT
+/F1 13 Tf
+(Hinweise zu GitHub Pages / PWA) Tj
+T*
+ET
+BT
+/F1 10 Tf
+14 TL
+(• Für Subpfade wurden relative URLs in index.html, sw.js und manifest.webmanifest verwendet.) Tj
+T*
+(• Nach inhaltlichen Updates ggf. Cache-Version `CACHE` im `sw.js` anheben und Hard Reload) Tj
+T*
+(\(Strg+F5\) ausführen.) Tj
+T*
+T*
+ET
+BT
+/F1 13 Tf
+(Ausblick) Tj
+T*
+ET
+BT
+/F1 10 Tf
+14 TL
+(• Optionale Backend-Integration \(OIDC-Login, Postgres, Audit-Logs, DSGVO-Export\).) Tj
+T*
+(• Kalender-Export \(ICS\), Benachrichtigungen \(E-Mail/Push\), Ressourcen-Konfliktprüfung.) Tj
+T*
+T*
+ET
+endstream
+endobj
+3 0 obj
+<< /Type /Page /Parent 6 0 R /MediaBox [0 0 595 842] /Resources << /Font << /F1 1 0 R >> >> /Contents 2 0 R >>
+endobj
+4 0 obj
+<< /Length 88 >>
+stream
+BT
+/F1 10 Tf
+14 TL
+1 0 0 1 50 792 Tm
+(© SchulPlan Pro – Demo-Dokumentation) Tj
+T*
+ET
+endstream
+endobj
+5 0 obj
+<< /Type /Page /Parent 6 0 R /MediaBox [0 0 595 842] /Resources << /Font << /F1 1 0 R >> >> /Contents 4 0 R >>
+endobj
+6 0 obj
+<< /Type /Pages /Count 2 /Kids [3 0 R 5 0 R] >>
+endobj
+7 0 obj
+<< /Type /Catalog /Pages 6 0 R >>
+endobj
+xref
+0 8
+0000000000 65535 f 
+0000000015 00000 n 
+0000000095 00000 n 
+0000003342 00000 n 
+0000003468 00000 n 
+0000003605 00000 n 
+0000003731 00000 n 
+0000003794 00000 n 
+trailer
+<< /Size 8 /Root 7 0 R >>
+startxref
+3843
+%%EOF
