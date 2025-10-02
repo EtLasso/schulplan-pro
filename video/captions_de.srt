@@ -1,0 +1,39 @@
+1
+00:00:00,000 --> 00:00:10,000
+Willkommen zu SchulPlan Pro – der modernen Schulplattform für Stundenpläne, Aufgaben, Abwesenheiten und Ressourcen.
+
+2
+00:00:10,000 --> 00:00:35,000
+Überblick: Dashboard, Stundenplan, Aufgaben, Abwesenheiten und Ressourcen.
+
+3
+00:00:35,000 --> 00:01:00,000
+Dashboard: Überblick über Fächer, Räume, Lehrkräfte und offene Aufgaben.
+
+4
+00:01:00,000 --> 00:01:25,000
+Stundenplan: Fächer pro Wochentag mit Zeiten, Raum und Lehrkraft.
+
+5
+00:01:25,000 --> 00:02:00,000
+Aufgaben: Kurs, Titel, Fälligkeitsdatum; Deadlines im Blick.
+
+6
+00:02:00,000 --> 00:02:25,000
+Abwesenheiten: Einreichen und Status verfolgen.
+
+7
+00:02:25,000 --> 00:02:45,000
+Ressourcen: Räume/Geräte buchen; Kapazitäten; später Konfliktprüfung.
+
+8
+00:02:45,000 --> 00:03:20,000
+Technik: GitHub Pages, Service Worker (Offline), PWA-Manifest, Mock-API.
+
+9
+00:03:20,000 --> 00:03:40,000
+Ausblick: OIDC-Login, DSGVO-Export, Audit-Logs, Benachrichtigungen, SIS.
+
+10
+00:03:40,000 --> 00:03:50,000
+Danke fürs Zuschauen! Live-Demo in der Beschreibung.

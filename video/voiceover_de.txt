@@ -1,0 +1,29 @@
+[Intro – 0:00–0:10]
+Willkommen zu SchulPlan Pro – der modernen Schulplattform für Stundenpläne, Aufgaben, Abwesenheiten und Ressourcen.
+
+[Überblick – 0:10–0:35]
+In den nächsten Minuten zeige ich die wichtigsten Funktionen der Demo: Dashboard, Stundenplan, Aufgaben, Abwesenheiten und Ressourcen.
+
+[Dashboard – 0:35–1:00]
+Auf dem Dashboard seht ihr den heutigen Überblick: Fächer, Räume, Lehrkräfte und offene Aufgaben.
+
+[Stundenplan – 1:00–1:25]
+Pro Wochentag: Fächer, Zeit, Raum, Lehrkraft. In echt kommen die Daten aus dem Schulverwaltungssystem.
+
+[Aufgaben – 1:25–2:00]
+Lehrkräfte erstellen Aufgaben mit Kurs, Titel und Fälligkeitsdatum. Lernende behalten Deadlines im Blick.
+
+[Abwesenheiten – 2:00–2:25]
+Abwesenheiten einreichen und Status verfolgen – einfach und transparent.
+
+[Ressourcen – 2:25–2:45]
+Räume und Geräte direkt buchen – mit Kapazitäten. In der Vollversion kommt Konfliktprüfung hinzu.
+
+[Technik – 2:45–3:20]
+Statische Web-App auf GitHub Pages: JS-Module, Service Worker für Offline, Manifest für PWA, Mock-API via localStorage.
+
+[Ausblick – 3:20–3:40]
+OIDC-Login, DSGVO-Export, Audit-Logs, Benachrichtigungen und SIS-Integration.
+
+[Outro – 3:40–3:50]
+Danke fürs Zuschauen! Link zur Live-Demo in der Beschreibung.
