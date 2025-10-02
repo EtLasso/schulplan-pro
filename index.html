@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="de" class="no-js">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>SchulPlan Pro</title>
+<meta name="description" content="Stundenpläne, Aufgaben, Abwesenheiten & Ressourcen – modern und schnell." />
+<link rel="manifest" href="manifest.webmanifest" />
+<link rel="stylesheet" href="css/styles.css" />
+<link rel="icon" href="assets/icons/app.svg" type="image/svg+xml" />
+</head>
+<body>
+<a class="skip" href="#app">Zum Inhalt springen</a>
+<div class="layout">
+<aside class="sidebar" aria-label="Hauptnavigation">
+<div class="brand">
+<img src="assets/icons/app.svg" alt="SchulPlan Pro" width="28" height="28"/>
+<span>SchulPlan <strong>Pro</strong></span>
+</div>
+<nav>
+<ul>
+<li><a href="#/" data-link><span class="ico">🏠</span><span>Dashboard</span></a></li>
+<li><a href="#/timetable" data-link><span class="ico">📅</span><span>Stundenplan</span></a></li>
+<li><a href="#/assignments" data-link><span class="ico">📝</span><span>Aufgaben</span></a></li>
+<li><a href="#/absences" data-link><span class="ico">🩺</span><span>Abwesenheiten</span></a></li>
+<li><a href="#/resources" data-link><span class="ico">🧩</span><span>Ressourcen</span></a></li>
+<li class="sep"></li>
+<li><a href="#/admin" data-link><span class="ico">🛡️</span><span>Admin</span></a></li>
+</ul>
+</nav>
+<footer>
+<button id="themeToggle" aria-pressed="false">🌓 Theme</button>
+<small>v1.0 • Offline-fähig</small>
+</footer>
+</aside>
+
+
+<main class="main">
+<header class="topbar">
+<input id="globalSearch" class="search" type="search" placeholder="Suche… (Strg+/)" aria-label="Suche"/>
+<div class="profile" role="group" aria-label="Profil und Benachrichtigungen">
+<button id="notifyBtn" aria-label="Benachrichtigungen">🔔</button>
+<button id="loginBtn" aria-label="Login">🔐</button>
+</div>
+</header>
+<section id="app" tabindex="-1" class="app"></section>
+</main>
+</div>
+
+
+<script type="module" src="js/app.js"></script>
+<script>
+if ('serviceWorker' in navigator) {
+window.addEventListener('load', () => {
+navigator.serviceWorker.register('./sw.js');
+});
+}
+</script>
+</body>
+</html>

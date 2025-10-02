@@ -1,0 +1,11 @@
+{
+"name": "SchulPlan Pro",
+"short_name": "SchulPlan",
+"display": "standalone",
+"start_url": "/",
+"background_color": "#0b0f17",
+"theme_color": "#0b0f17",
+"icons": [
+{"src": "assets/icons/app.svg", "sizes": "any", "type": "image/svg+xml"}
+]
+}
