@@ -4,7 +4,7 @@
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>SchulPlan Pro</title>
-<meta name="description" content="Stundenpläne, Aufgaben, Abwesenheiten & Ressourcen – modern und schnell." />
+<meta name="description" content="Stundenpl&auml;ne, Aufgaben, Abwesenheiten und Ressourcen &ndash; modern und schnell." />
 <link rel="manifest" href="manifest.webmanifest" />
 <link rel="stylesheet" href="css/styles.css" />
 <link rel="icon" href="assets/icons/app.svg" type="image/svg+xml" />
@@ -19,41 +19,39 @@
 </div>
 <nav>
 <ul>
-<li><a href="#/" data-link><span class="ico">🏠</span><span>Dashboard</span></a></li>
-<li><a href="#/timetable" data-link><span class="ico">📅</span><span>Stundenplan</span></a></li>
-<li><a href="#/assignments" data-link><span class="ico">📝</span><span>Aufgaben</span></a></li>
-<li><a href="#/absences" data-link><span class="ico">🩺</span><span>Abwesenheiten</span></a></li>
-<li><a href="#/resources" data-link><span class="ico">🧩</span><span>Ressourcen</span></a></li>
+<li><a href="#/" data-link><span class="ico">&#127968;</span><span>Dashboard</span></a></li>
+<li><a href="#/timetable" data-link><span class="ico">&#128197;</span><span>Stundenplan</span></a></li>
+<li><a href="#/assignments" data-link><span class="ico">&#128221;</span><span>Aufgaben</span></a></li>
+<li><a href="#/absences" data-link><span class="ico">&#129658;</span><span>Abwesenheiten</span></a></li>
+<li><a href="#/resources" data-link><span class="ico">&#129513;</span><span>Ressourcen</span></a></li>
 <li class="sep"></li>
-<li><a href="#/admin" data-link><span class="ico">🛡️</span><span>Admin</span></a></li>
+<li><a href="#/admin" data-link><span class="ico">&#128737;&#65039;</span><span>Admin</span></a></li>
 </ul>
 </nav>
 <footer>
-        <a class="btn" href="assets/docs/dokumentation.pdf" target="_blank" rel="noopener">📄 Dokumentation</a>
-<button id="themeToggle" aria-pressed="false">🌓 Theme</button>
-<small>v1.0 • Offline-fähig</small>
+<a class="btn" href="assets/docs/dokumentation.pdf" target="_blank" rel="noopener">&#128196; Dokumentation</a>
+<button id="themeToggle" aria-pressed="false">&#127769; Theme</button>
+<small>v1.0 &bull; Offline-f&auml;hig</small>
 </footer>
 </aside>
 
-
 <main class="main">
 <header class="topbar">
-<input id="globalSearch" class="search" type="search" placeholder="Suche… (Strg+/)" aria-label="Suche"/>
+<input id="globalSearch" class="search" type="search" placeholder="Suche&hellip; (Strg+/)" aria-label="Suche"/>
 <div class="profile" role="group" aria-label="Profil und Benachrichtigungen">
-<button id="notifyBtn" aria-label="Benachrichtigungen">🔔</button>
-<button id="loginBtn" aria-label="Login">🔐</button>
+<button id="notifyBtn" aria-label="Benachrichtigungen">&#128276;</button>
+<button id="loginBtn" aria-label="Login">&#128272;</button>
 </div>
 </header>
 <section id="app" tabindex="-1" class="app"></section>
 </main>
 </div>
 
-
 <script type="module" src="js/app.js"></script>
 <script>
 if ('serviceWorker' in navigator) {
 window.addEventListener('load', () => {
-navigator.serviceWorker.register('../sw.js');
+navigator.serviceWorker.register('./sw.js');
 });
 }
 </script>
