@@ -1,7 +1,6 @@
 import { api } from '../api/mock.js';
 import { fmtDate } from '../components/ui.js';
 
-
 export default {
 render(){
 const list = api.listAssignments();
@@ -15,12 +14,14 @@ return `
 <input name="due" type="datetime-local" required />
 <button class="btn">Erstellen</button>
 </form>
+<div class="table-wrap">
 <table class="table" aria-label="Aufgabenliste">
-<thead><tr><th>Kurs</th><th>Titel</th><th>Fällig</th><th>Status</th></tr></thead>
+<thead><tr><th>Kurs</th><th>Titel</th><th>F&auml;llig</th><th>Status</th></tr></thead>
 <tbody>
 ${list.map(a=>`<tr><td>${a.course}</td><td>${a.title}</td><td>${fmtDate(a.due)}</td><td>${a.status}</td></tr>`).join('')}
 </tbody>
 </table>
+</div>
 </div>
 </div>`;
 },
